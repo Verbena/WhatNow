@@ -71,7 +71,7 @@ public class Parser {
             return prepareFind(arguments);
 
         case ListCommand.COMMAND_WORD:
-            return new ListCommand();
+            return prepareList(arguments);
 
         case ExitCommand.COMMAND_WORD:
             return new ExitCommand();
@@ -246,4 +246,27 @@ public class Parser {
         return new FindCommand(keywordSet);
     }
 
+    /**
+     * Parses arguments in the context of the list tasks command.
+     *
+     * @param args full command args string
+     * @return the prepared command
+     */
+    private Command prepareList(String args) {
+        if (args == null)
+            new ListCommand();
+        
+        String[] arguments = args.split(" ");
+        
+        if (!arguments[0].equals("todo") && !arguments[0].equals("schedule") && !arguments[0].equals("completed") && !arguments[0].equals("all"))
+            return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListCommand.MESSAGE_USAGE));
+        
+        if (arguments.length > 1 && !arguments[1].equals("on") && !arguments[1].equals("at") && !arguments[1].equals("with"))
+            return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListCommand.MESSAGE_USAGE));
+        
+        if (arguments.length == 2)
+            return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListCommand.MESSAGE_USAGE));
+        
+        return new ListCommand(arguments);
+    }
 }
